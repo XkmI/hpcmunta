@@ -8,7 +8,7 @@
 #define TOLSQ 1e-6
 #define ABSSQ(zfl) (crealf(zfl)*crealf(zfl) + cimagf(zfl)*cimagf(zfl))
 #define SZ 10000lu
-#define IX 200
+#define IX 2000
 
 void newton_iter(const double re_z0, const double im_z0, const char *degree_ptr, char *attr_indices, size_t *n_iter) {
   double realdum, imagdum;
@@ -375,7 +375,8 @@ int main() {
 
     printf("We get through a row of %zu starting points in %zu ticks\n", SZ, t);
 
-    printf("Wow vi hittar nollställe nr %c till x^%d - 1 på %zu iteration(er) när vi startgissar på %f + %fi\n", attractor[10], degree - ZEROCHARVAL, convergence[10], -2. + 4./(SZ - 1)*IX, 2. - 4./(SZ - 1)*10);
+    printf("We find zero #%c of x^%d - 1 in %zu iteration(s) when our initial guess is %f + %fi\n", attractor[11], degree - ZEROCHARVAL, convergence[11], -2. + 4./(SZ - 1)*IX, 2. - 4./(SZ - 1)*11);
+    printf("We find zero #%c of x^%d - 1 in %zu iteration(s) when our initial guess is %f + %fi\n", attractor[SZ/2], degree - ZEROCHARVAL, convergence[SZ/2], -2. + 4./(SZ - 1)*IX, 2. - 4./(SZ - 1)*SZ/2);
     //printf("(vårt värde är %f + %fi)\n", crealf(zVal), cimagf(zVal));
 
     free(attractor);
