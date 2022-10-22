@@ -8,7 +8,7 @@
 #define TOLSQ 1e-6
 #define ABSSQ(zfl) (creal(zfl)*creal(zfl) + cimag(zfl)*cimag(zfl))
 #define SZ 1000000lu
-#define IX 4000
+#define IX 400000
 
 void newton_iter(const double re_z0, const double im_z0, const char *degree_ptr, char *attr_indices, size_t *n_iter) {
   double realdum, imagdum;
