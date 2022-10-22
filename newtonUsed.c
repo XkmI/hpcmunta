@@ -6,8 +6,8 @@
 
 #define ZEROCHARVAL 48
 #define TOLSQ 1e-6
-#define ABSSQ(zfl) (crealf(zfl)*crealf(zfl) + cimagf(zfl)*cimagf(zfl))
-#define SZ 10000lu
+#define ABSSQ(zfl) (creal(zfl)*creal(zfl) + cimag(zfl)*cimag(zfl))
+#define SZ 1000000lu
 #define IX 4000
 
 void newton_iter(const double re_z0, const double im_z0, const char *degree_ptr, char *attr_indices, size_t *n_iter) {
@@ -363,12 +363,12 @@ void newton_iter(const double re_z0, const double im_z0, const char *degree_ptr,
 }
 
 int main() {
-    char degree = '5';
+    const char degree = '5';
     char *attractor = (char*) malloc(SZ*sizeof(char));
     size_t *convergence = (size_t*) malloc(SZ*sizeof(size_t));
 
     for ( int jx = 0; jx < SZ; ++jx ) {
-        newton_iter(-2. + 4./(SZ - 1)*IX,  2. - 4./(SZ - 1)*jx, (const char*) &degree, &attractor[jx], &convergence[jx]);
+        newton_iter(-2. + 4./(SZ - 1)*IX,  2. - 4./(SZ - 1)*jx, &degree, &attractor[jx], &convergence[jx]);
     }
 
     printf("We find zero #%c of x^%d - 1 in %zu iteration(s) when our initial guess is %f + %fi\n", attractor[11], degree - ZEROCHARVAL, convergence[11], -2. + 4./(SZ - 1)*IX, 2. - 4./(SZ - 1)*11);
