@@ -8,7 +8,7 @@
 #define TOLSQ 1e-6
 #define ABSSQ(zfl) (crealf(zfl)*crealf(zfl) + cimagf(zfl)*cimagf(zfl))
 #define SZ 10000lu
-#define IX 5000
+#define IX 4000
 
 void newton_iter(const double re_z0, const double im_z0, const char *degree_ptr, char *attr_indices, size_t *n_iter) {
   double realdum, imagdum;
@@ -366,17 +366,13 @@ int main() {
     char degree = '5';
     char *attractor = (char*) malloc(SZ*sizeof(char));
     size_t *convergence = (size_t*) malloc(SZ*sizeof(size_t));
-    
-    clock_t t = clock();
-    for ( int jx = 0; jx < SZ; ++jx ) {
-      newton_iter(-2. + 4./(SZ - 1)*IX,  2. - 4./(SZ - 1)*jx, (const char*) &degree, &attractor[jx], &convergence[jx]);
-    }
-    t = clock() - t;
 
-    printf("We get through a row of %zu starting points in %zu ticks\n", SZ, t);
+    for ( int jx = 0; jx < SZ; ++jx ) {
+        newton_iter(-2. + 4./(SZ - 1)*IX,  2. - 4./(SZ - 1)*jx, (const char*) &degree, &attractor[jx], &convergence[jx]);
+    }
 
     printf("We find zero #%c of x^%d - 1 in %zu iteration(s) when our initial guess is %f + %fi\n", attractor[11], degree - ZEROCHARVAL, convergence[11], -2. + 4./(SZ - 1)*IX, 2. - 4./(SZ - 1)*11);
-    printf("We find zero #%c of x^%d - 1 in %zu iteration(s) when our initial guess is %f + %fi\n", attractor[SZ/2], degree - ZEROCHARVAL, convergence[SZ/2], -2. + 4./(SZ - 1)*IX, 2. - 4./(SZ - 1)*SZ/2);
+    //printf("We find zero #%c of x^%d - 1 in %zu iteration(s) when our initial guess is %f + %fi\n", attractor[SZ/2], degree - ZEROCHARVAL, convergence[SZ/2], -2. + 4./(SZ - 1)*IX, 2. - 4./(SZ - 1)*SZ/2);
     //printf("(vårt värde är %f + %fi)\n", crealf(zVal), cimagf(zVal));
 
     free(attractor);
