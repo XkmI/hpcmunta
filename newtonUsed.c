@@ -363,7 +363,7 @@ void newton_iter(const double re_z0, const double im_z0, const char *degree_ptr,
 }
 
 int main() {
-    char degree = '2';
+    char degree = '5';
     char *attractor = (char*) malloc(SZ*sizeof(char));
     size_t *convergence = (size_t*) malloc(SZ*sizeof(size_t));
     
