@@ -9,8 +9,6 @@
 #define IX 400000
 
 void newton_iter(double re_z0, double im_z0, int *degree_ptr, int *attr_indices, size_t *n_iter) {
-  double realdum, imagdum;
-  complex double zDum;
   // Initial guess, initialize iteration counter
   complex double zVal = re_z0 + im_z0*I;
   *n_iter = 0;
@@ -319,7 +317,7 @@ void newton_iter(double re_z0, double im_z0, int *degree_ptr, int *attr_indices,
                 *attr_indices = 9;
                 break;
             }
-            zVal = (8.*zVal + 1./(zDum*zDum))/9.;
+            zVal = (8.*zVal + 1./(zVal*zVal*zVal*zVal*zVal*zVal*zVal*zVal))/9.;
             (*n_iter)++;
         }
         break;
