@@ -7,7 +7,7 @@
 #define ZEROCHARVAL 48
 #define TOLSQ 1e-6
 #define ABSSQ(zfl) (crealf(zfl)*crealf(zfl) + cimagf(zfl)*cimagf(zfl))
-#define SZ 1000lu
+#define SZ 10000lu
 #define IX 200
 
 void newton_iter(const double re_z0, const double im_z0, const char *degree_ptr, char *attr_indices, size_t *n_iter) {
@@ -373,7 +373,7 @@ int main() {
     }
     t = clock() - t;
 
-    printf("We get through a row of %zu starting points in %zu ticks", SZ, t);
+    printf("We get through a row of %zu starting points in %zu ticks\n", SZ, t);
 
     printf("Wow vi hittar nollställe nr %c till x^%d - 1 på %zu iteration(er) när vi startgissar på %f + %fi\n", attractor[10], degree - ZEROCHARVAL, convergence[10], -2. + 4./(SZ - 1)*IX, 2. - 4./(SZ - 1)*10);
     //printf("(vårt värde är %f + %fi)\n", crealf(zVal), cimagf(zVal));
