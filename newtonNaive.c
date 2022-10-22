@@ -17,7 +17,7 @@ void newton_iter(double re_z0, double im_z0, int *degree_ptr, int *attr_indices,
   switch (*degree_ptr) {
     case 1:
         for (;;) {
-            if ((fabs(creal(zVal)) > 1e10) || (imagfabs(cimag(zVal)) > 1e10)) {
+            if ((fabs(creal(zVal)) > 1e10) || (fabs(cimag(zVal)) > 1e10)) {
                 *attr_indices = 0;
                 break;
             }
@@ -331,7 +331,7 @@ void newton_iter(double re_z0, double im_z0, int *degree_ptr, int *attr_indices,
 
 int main() {
     int degree = 5;
-    int *attractor = (char*) malloc(SZ*sizeof(int));
+    int *attractor = (int*) malloc(SZ*sizeof(int));
     size_t *convergence = (size_t*) malloc(SZ*sizeof(size_t));
 
     for ( int jx = 0; jx < SZ; ++jx ) {
