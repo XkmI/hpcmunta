@@ -1,4 +1,4 @@
-PROGRAM = newtonUsed newtonNaive newtonQuicc
+PROGRAM = newtonUsed newtonNaive newtonQuicc newtonQuiccUC
 CC = gcc
 CFLAGS = -O2 -Wall -fcx-limited-range#-g
 LIBS = -lm#-lpthread -lgsl -lgslcblas
