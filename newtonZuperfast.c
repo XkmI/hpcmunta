@@ -2,371 +2,221 @@
 #include <stdlib.h>
 #include <math.h>
 #include <complex.h>
+#include <time.h>
 
-#define X0 1.
-#define Y0 4.
 #define ZEROCHARVAL 48
 #define TOLSQ 1e-6
-#define ABSSQ(zfl) (crealf(zfl)*crealf(zfl) + cimagf(zfl)*cimagf(zfl))
+#define ABSSQ(zfl) (creal(zfl)*creal(zfl) + cimag(zfl)*cimag(zfl))
+#define SZ 1000000lu
+#define IX 400000
+#define PI 3.141592653589793
 
-int main() {
-    char degree = '2';
-    char zeroIndex;
-    float realdum, imagdum;
-    complex float zDum;
-    // Initial guess, initialize iteration counter
-    complex float zVal = X0 + Y0*I;
-    size_t nIter = 0;
+void newton_iter(const double re_z0, const double im_z0, const char *degree_ptr, char *attr_indices, size_t *n_iter) {
+  double realdum, imagdum;
+  complex double zDum;
+  // Initial guess, initialize iteration counter
+  complex double zVal = re_z0 + im_z0*I;
+  *n_iter = 0;
     
-    // Commence spaghetti
-    switch (degree) {
+  // Commence spaghetti
+  switch (*degree_ptr) {
     case '1':
-        zeroIndex = '0';
-        zVal = (complex float) 1.;
-        nIter = 1;
-        break;
+      *attr_indices = '1';
+      zVal = (complex double) 1.;
+      *n_iter = 1;
+      break;
     case '2':
-        for (;;) {
-            realdum = fabsf(crealf(zVal));
-            imagdum = fabsf(cimagf(zVal));
-            if ((realdum > 1e10) || (imagdum > 1e10)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if ((realdum*realdum + imagdum*imagdum < TOLSQ)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if (ABSSQ(zVal - 1.) < TOLSQ) {
-                zeroIndex = '0';
-                break;
-            }
-            if (ABSSQ(zVal + 1.) < TOLSQ) {
-                zeroIndex = '1';
-                break;
-            }
-            zVal = (zVal + 1./zVal)/2.;
-            nIter++;
-
-            printf("%zu\n",nIter);
-            printf("%f + %fi\n",crealf(zVal),cimagf(zVal));
+      for (;;) {
+        realdum = fabs(creal(zVal));
+        imagdum = fabs(cimag(zVal));
+        if ((realdum > 1e10) || (imagdum > 1e10)) {
+          *attr_indices = '0';
+          break;
         }
-        break;
+        if (realdum*realdum + imagdum*imagdum < TOLSQ) {
+          *attr_indices = '0';
+          break;
+        }
+        if (ABSSQ(zVal*zVal - 1.) < 4e-6) {
+          *attr_indices = (char) ((int) (2.5 + carg(zVal)/PI) % 2 + 1 + ZEROCHARVAL);
+          break;
+        }
+        zVal = (zVal + 1./zVal)/2.;
+        (*n_iter)++;
+      }
+      break;
     case '3':
-        for (;;) {
-            realdum = fabsf(crealf(zVal));
-            imagdum = fabsf(cimagf(zVal));
-            if ((realdum > 1e10) || (imagdum > 1e10)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if ((realdum*realdum + imagdum*imagdum < TOLSQ)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if (ABSSQ(zVal - 1.) < TOLSQ) {
-                zeroIndex = '0';
-                break;
-            }
-            if (ABSSQ(zVal + (0.5 - 0.8660254037844386*I)) < TOLSQ) {
-                zeroIndex = '1';
-                break;
-            }
-            if (ABSSQ(zVal + (0.5 + 0.8660254037844386*I)) < TOLSQ) {
-                zeroIndex = '2';
-                break;
-            }
-            zVal = (2.*zVal + 1./(zVal*zVal))/3.;
-            nIter++;
-
-            printf("%zu\n",nIter);
-            printf("%f + %fi\n",crealf(zVal),cimagf(zVal));
+      for (;;) {
+        realdum = fabs(creal(zVal));
+        imagdum = fabs(cimag(zVal));
+        if ((realdum > 1e10) || (imagdum > 1e10)) {
+          *attr_indices = '0';
+          break;
         }
-        break;
+        if (realdum*realdum + imagdum*imagdum < TOLSQ) {
+          *attr_indices = '0';
+          break;
+        }
+        zDum = zVal*zVal;
+        if (ABSSQ(zDum*zVal - 1.) < 9e-6) {
+          *attr_indices = (char) ((int) (3.5 + 1.5*carg(zVal)/PI) % 3 + 1 + ZEROCHARVAL);
+          break;
+        }
+        zVal = (2.*zVal + 1./zDum)/3.;
+        (*n_iter)++;
+      }
+      break;
     case '4':
-        for (;;) {
-            realdum = fabsf(crealf(zVal));
-            imagdum = fabsf(cimagf(zVal));
-            if ((realdum > 1e10) || (imagdum > 1e10)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if ((realdum*realdum + imagdum*imagdum < TOLSQ)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if (ABSSQ(zVal - 1.) < TOLSQ) {
-                zeroIndex = '0';
-                break;
-            }
-            if (ABSSQ(zVal - I) < TOLSQ) {
-                zeroIndex = '1';
-                break;
-            }
-            if (ABSSQ(zVal + 1.) < TOLSQ) {
-                zeroIndex = '2';
-                break;
-            }
-            if (ABSSQ(zVal + I) < TOLSQ) {
-                zeroIndex = '3';
-                break;
-            }
-            zVal = (3.*zVal + 1./(zVal*zVal*zVal))/4.;
-            nIter++;
-
-            printf("%zu\n",nIter);
-            printf("%f + %fi\n",crealf(zVal),cimagf(zVal));
+      for (;;) {
+        realdum = fabs(creal(zVal));
+        imagdum = fabs(cimag(zVal));
+        if ((realdum > 1e10) || (imagdum > 1e10)) {
+          *attr_indices = '0';
+          break;
         }
-        break;
+        if (realdum*realdum + imagdum*imagdum < TOLSQ) {
+          *attr_indices = '0';
+          break;
+        }
+        zDum = zVal*zVal;
+        if (ABSSQ(zDum*zDum - 1.) < 1.6e-5) {
+          *attr_indices = (char) ((int) (4.5 + 2.*carg(zVal)/PI) % 4 + 1 + ZEROCHARVAL);
+          break;
+        }
+        zVal = (3.*zVal + 1./(zDum*zVal))/4.;
+        (*n_iter)++;
+      }
+      break;
     case '5':
-        for (;;) {
-            realdum = fabsf(crealf(zVal));
-            imagdum = fabsf(cimagf(zVal));
-            if ((realdum > 1e10) || (imagdum > 1e10)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if ((realdum*realdum + imagdum*imagdum < TOLSQ)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if (ABSSQ(zVal - 1.) < TOLSQ) {
-                zeroIndex = '0';
-                break;
-            }
-            if (ABSSQ(zVal - (0.309016994374948 + 0.951056516295153*I)) < TOLSQ) {
-                zeroIndex = '1';
-                break;
-            }
-            if (ABSSQ(zVal + 0.809016994374947 - 0.587785252292473*I) < TOLSQ) {
-                zeroIndex = '2';
-                break;
-            }
-            if (ABSSQ(zVal + 0.809016994374947 + 0.587785252292473*I) < TOLSQ) {
-                zeroIndex = '3';
-                break;
-            }
-            if (ABSSQ(zVal - 0.309016994374948 + 0.951056516295153*I) < TOLSQ) {
-                zeroIndex = '4';
-                break;
-            }
-            zDum = zVal*zVal;
-            zVal = (4.*zVal + 1./(zDum*zDum))/5.;
-            nIter++;
-
-            printf("%zu\n",nIter);
-            printf("%f + %fi\n",crealf(zVal),cimagf(zVal));
+      for (;;) {
+        realdum = fabs(creal(zVal));
+        imagdum = fabs(cimag(zVal));
+        if ((realdum > 1e10) || (imagdum > 1e10)) {
+          *attr_indices = '0';
+          break;
         }
-        break;
+        if (realdum*realdum + imagdum*imagdum < TOLSQ) {
+          *attr_indices = '0';
+          break;
+        }
+        zDum = zVal*zVal;
+        zDum *= zDum;
+        if (ABSSQ(zDum*zVal - 1.) < 2.5e-5) {
+          *attr_indices = (char) ((int) (5.5 + 2.5*carg(zVal)/PI) % 5 + 1 + ZEROCHARVAL);
+          break;
+        }
+        zVal = (4.*zVal + 1./zDum)/5.;
+        (*n_iter)++;
+      }
+      break;
     case '6':
-        for (;;) {
-            realdum = fabsf(crealf(zVal));
-            imagdum = fabsf(cimagf(zVal));
-            if ((realdum > 1e10) || (imagdum > 1e10)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if ((realdum*realdum + imagdum*imagdum < TOLSQ)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if (ABSSQ(zVal - 1.) < TOLSQ) {
-                zeroIndex = '0';
-                break;
-            }
-            if (ABSSQ(zVal - (0.5 + 0.8660254037844386*I)) < TOLSQ) {
-                zeroIndex = '1';
-                break;
-            }
-            if (ABSSQ(zVal + 0.5 - 0.8660254037844386*I) < TOLSQ) {
-                zeroIndex = '2';
-                break;
-            }
-            if (ABSSQ(zVal + 1.) < TOLSQ) {
-                zeroIndex = '3';
-                break;
-            }
-            if (ABSSQ(zVal + 0.5 + 0.8660254037844386*I) < TOLSQ) {
-                zeroIndex = '4';
-                break;
-            }
-            if (ABSSQ(zVal - 0.5 + 0.8660254037844386*I) < TOLSQ) {
-                zeroIndex = '5';
-                break;
-            }
-            zDum = zVal*zVal;
-            zVal = (5.*zVal + 1./(zDum*zDum*zVal))/6.;
-            nIter++;
-
-            printf("%zu\n",nIter);
-            printf("%f + %fi\n",crealf(zVal),cimagf(zVal));
+      for (;;) {
+        realdum = fabs(creal(zVal));
+        imagdum = fabs(cimag(zVal));
+        if ((realdum > 1e10) || (imagdum > 1e10)) {
+          *attr_indices = '0';
+          break;
         }
-        break;
+        if (realdum*realdum + imagdum*imagdum < TOLSQ) {
+          *attr_indices = '0';
+          break;
+        }
+        zDum = zVal*zVal*zVal;
+        if (ABSSQ(zDum*zDum - 1.) < 3.6e-5) {
+          *attr_indices = (char) ((int) (6.5 + 3.*carg(zVal)/PI) % 6 + 1 + ZEROCHARVAL);
+          break;
+        }
+        zVal = (5.*zVal + 1./(zDum*zVal*zVal))/6.;
+        (*n_iter)++;
+      }
+      break;
     case '7':
-        for (;;) {
-            realdum = fabsf(crealf(zVal));
-            imagdum = fabsf(cimagf(zVal));
-            if ((realdum > 1e10) || (imagdum > 1e10)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if ((realdum*realdum + imagdum*imagdum < TOLSQ)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if (ABSSQ(zVal - 1.) < TOLSQ) {
-                zeroIndex = '0';
-                break;
-            }
-            if (ABSSQ(zVal - (0.623489801858734 + 0.781831482468030*I)) < TOLSQ) {
-                zeroIndex = '1';
-                break;
-            }
-            if (ABSSQ(zVal + 0.222520933956314 - 0.974927912181824*I) < TOLSQ) {
-                zeroIndex = '2';
-                break;
-            }
-            if (ABSSQ(zVal + 0.900968867902419 - 0.433883739117558*I) < TOLSQ) {
-                zeroIndex = '3';
-                break;
-            }
-            if (ABSSQ(zVal + 0.900968867902419 + 0.433883739117558*I) < TOLSQ) {
-                zeroIndex = '4';
-                break;
-            }
-            if (ABSSQ(zVal + 0.222520933956314 + 0.974927912181824*I) < TOLSQ) {
-                zeroIndex = '5';
-                break;
-            }
-            if (ABSSQ(zVal - 0.623489801858734 + 0.781831482468030*I) < TOLSQ) {
-                zeroIndex = '6';
-                break;
-            }
-            zDum = zVal*zVal;
-            zVal = (6.*zVal + 1./(zDum*zDum*zDum))/7.;
-            nIter++;
-
-            printf("%zu\n",nIter);
-            printf("%f + %fi\n",crealf(zVal),cimagf(zVal));
+      for (;;) {
+        realdum = fabs(creal(zVal));
+        imagdum = fabs(cimag(zVal));
+        if ((realdum > 1e10) || (imagdum > 1e10)) {
+          *attr_indices = '0';
+          break;
         }
-        break;
+        if (realdum*realdum + imagdum*imagdum < TOLSQ) {
+          *attr_indices = '0';
+          break;
+        }
+        zDum = zVal*zVal*zVal;
+        if (ABSSQ(zDum*zDum*zVal - 1.) < 4.9e-5) {
+          *attr_indices = (char) ((int) (7.5 + 3.5*carg(zVal)/PI) % 7 + 1 + ZEROCHARVAL);
+          break;
+        }
+        zVal = (6.*zVal + 1./(zDum*zDum))/7.;
+        (*n_iter)++;
+      }
+      break;
     case '8':
-        for (;;) {
-            realdum = fabsf(crealf(zVal));
-            imagdum = fabsf(cimagf(zVal));
-            if ((realdum > 1e10) || (imagdum > 1e10)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if ((realdum*realdum + imagdum*imagdum < TOLSQ)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if (ABSSQ(zVal - 1.) < TOLSQ) {
-                zeroIndex = '0';
-                break;
-            }
-            if (ABSSQ(zVal - (0.707106781186548 + 0.707106781186547*I)) < TOLSQ) {
-                zeroIndex = '1';
-                break;
-            }
-            if (ABSSQ(zVal - I) < TOLSQ) {
-                zeroIndex = '2';
-                break;
-            }
-            if (ABSSQ(zVal + 0.707106781186548 - 0.707106781186547*I) < TOLSQ) {
-                zeroIndex = '3';
-                break;
-            }
-            if (ABSSQ(zVal + 1.) < TOLSQ) {
-                zeroIndex = '4';
-                break;
-            }
-            if (ABSSQ(zVal + 0.707106781186548 + 0.707106781186547*I) < TOLSQ) {
-                zeroIndex = '5';
-                break;
-            }
-            if (ABSSQ(zVal + I) < TOLSQ) {
-                zeroIndex = '6';
-                break;
-            }
-            if (ABSSQ(zVal - 0.707106781186548 + 0.707106781186547*I) < TOLSQ) {
-                zeroIndex = '7';
-                break;
-            }
-            zDum = zVal*zVal;
-            zVal = (7.*zVal + 1./(zDum*zDum*zDum*zVal))/8.;
-            nIter++;
-
-            printf("%zu\n",nIter);
-            printf("%f + %fi\n",crealf(zVal),cimagf(zVal));
+      for (;;) {
+        realdum = fabs(creal(zVal));
+        imagdum = fabs(cimag(zVal));
+        if ((realdum > 1e10) || (imagdum > 1e10)) {
+          *attr_indices = '0';
+          break;
         }
-        break;
+        if (realdum*realdum + imagdum*imagdum < TOLSQ) {
+          *attr_indices = '0';
+          break;
+        }
+        zDum = zVal*zVal;
+        zDum *= zDum;
+        if (ABSSQ(zDum*zDum - 1.) < 6.4e-5) {
+          *attr_indices = (char) ((int) (8.5 + 4.*carg(zVal)/PI) % 8 + 1 + ZEROCHARVAL);
+          break;
+        }
+        zVal = (7.*zVal + 1./(zDum*zVal*zVal*zVal))/8.;
+        (*n_iter)++;
+      }
+      break;
     case '9':
-        for (;;) {
-            realdum = fabsf(crealf(zVal));
-            imagdum = fabsf(cimagf(zVal));
-            if ((realdum > 1e10) || (imagdum > 1e10)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if ((realdum*realdum + imagdum*imagdum < TOLSQ)) {
-                zeroIndex = 'F';
-                break;
-            }
-            if (ABSSQ(zVal - 1.) < TOLSQ) {
-                zeroIndex = '0';
-                break;
-            }
-            if (ABSSQ(zVal - (0.766044443118978 + 0.642787609686539*I)) < TOLSQ) {
-                zeroIndex = '1';
-                break;
-            }
-            if (ABSSQ(zVal - (0.173648177666930 + 0.984807753012208*I)) < TOLSQ) {
-                zeroIndex = '2';
-                break;
-            }
-            if (ABSSQ(zVal + 0.500000000000000 - 0.866025403784439*I) < TOLSQ) {
-                zeroIndex = '3';
-                break;
-            }
-            if (ABSSQ(zVal + 0.939692620785908 - 0.342020143325669*I) < TOLSQ) {
-                zeroIndex = '4';
-                break;
-            }
-            if (ABSSQ(zVal + 0.939692620785908 + 0.342020143325669*I) < TOLSQ) {
-                zeroIndex = '5';
-                break;
-            }
-            if (ABSSQ(zVal + 0.500000000000000 + 0.866025403784439*I) < TOLSQ) {
-                zeroIndex = '6';
-                break;
-            }
-            if (ABSSQ(zVal - 0.173648177666930 + 0.984807753012208*I) < TOLSQ) {
-                zeroIndex = '7';
-                break;
-            }
-            if (ABSSQ(zVal - 0.766044443118978 + 0.642787609686539*I) < TOLSQ) {
-                zeroIndex = '8';
-                break;
-            }
-            zDum = zVal*zVal;
-            zDum *= zDum;
-            zVal = (8.*zVal + 1./(zDum*zDum))/9.;
-            nIter++;
-
-            printf("%zu\n",nIter);
-            printf("%f + %fi\n",crealf(zVal),cimagf(zVal));
+      for (;;) {
+        realdum = fabs(creal(zVal));
+        imagdum = fabs(cimag(zVal));
+        if ((realdum > 1e10) || (imagdum > 1e10)) {
+          *attr_indices = '0';
+          break;
         }
-        break;
+        if (realdum*realdum + imagdum*imagdum < TOLSQ) {
+          *attr_indices = '0';
+          break;
+        }
+        zDum = zVal*zVal;
+        zDum *= zDum;
+        if (ABSSQ(zDum*zDum*zVal - 1.) < 8.1e-5) {
+          *attr_indices = (char) ((int) (9.5 + 4.5*carg(zVal)/PI) % 9 + 1 + ZEROCHARVAL);
+          break;
+        }
+        zVal = (8.*zVal + 1./(zDum*zDum))/9.;
+        (*n_iter)++;
+      }
+      break;
     // No further cases. Hyyyyyype.
 
     default:
-        fprintf(stderr, "unexpected degree\n");
-        exit(1);
+      fprintf(stderr, "unexpected degree\n");
+      exit(1);
+  }
+}
+
+int main() {
+    const char degree = '5';
+    char *attractor = (char*) malloc(SZ*sizeof(char));
+    size_t *convergence = (size_t*) malloc(SZ*sizeof(size_t));
+
+    for ( int jx = 0; jx < SZ; ++jx ) {
+        newton_iter(-2. + 4./(SZ - 1)*IX,  2. - 4./(SZ - 1)*jx, &degree, &attractor[jx], &convergence[jx]);
     }
 
-    printf("Wow vi hittar nollställe nr %c till x^%d - 1 på %zu iteration(er) när vi startgissar på %f + %fi\n", zeroIndex, degree - ZEROCHARVAL, nIter, X0, Y0);
-    printf("(vårt värde är %f + %fi)\n", crealf(zVal), cimagf(zVal));
+    printf("We find zero #%c of x^%d - 1 in %zu iteration(s) when our initial guess is %f + %fi\n", attractor[11], degree - ZEROCHARVAL, convergence[11], -2. + 4./(SZ - 1)*IX, 2. - 4./(SZ - 1)*11);
+    //printf("We find zero #%c of x^%d - 1 in %zu iteration(s) when our initial guess is %f + %fi\n", attractor[SZ/2], degree - ZEROCHARVAL, convergence[SZ/2], -2. + 4./(SZ - 1)*IX, 2. - 4./(SZ - 1)*SZ/2);
+    //printf("(vårt värde är %f + %fi)\n", crealf(zVal), cimagf(zVal));
+
+    free(attractor);
+    free(convergence);
     return 0;
 }
